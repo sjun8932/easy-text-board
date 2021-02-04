@@ -2,8 +2,8 @@ package com.sjp.example.easytextboard;
 
 import java.util.Scanner;
 
-public class Main {
-	public static void main(String[] args) {
+public class App {
+	public void run(){
 		Scanner scanner = new Scanner(System.in);
 
 		// 1번 게시물 저장소
@@ -18,7 +18,7 @@ public class Main {
 			String command = scanner.nextLine();
 
 			if (command.startsWith("article detail")) {
-				int inputedId = Integer.parseInt(command.split("")[2]);
+				int inputedId = Integer.parseInt(command.split(" ")[2]);
 				System.out.println("== 게시물 상세 ==");
 				
 				if (inputedId == 1) {
@@ -70,7 +70,7 @@ public class Main {
 
 				System.out.printf("제목 : ");
 				title = scanner.nextLine();
-				System.out.printf("내용 " ");
+				System.out.printf("내용 : ");
 				body = scanner.nextLine();
 
 				if (id == 1) {
@@ -83,7 +83,7 @@ public class Main {
 					article2.body = body;
 				}
 
-				// System.out.printf("제목 : %s, 내용 : %s\n" , title, body);
+				
 				System.out.printf("%d번 게시물이 생성되었습니다.\n", id);
 
 				// 가장 마지막 게시물 번호를 갱신한다.
