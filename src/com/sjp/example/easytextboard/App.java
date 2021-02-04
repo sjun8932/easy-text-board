@@ -3,13 +3,25 @@ package com.sjp.example.easytextboard;
 import java.util.Scanner;
 
 public class App {
-	public void run(){
-		Scanner scanner = new Scanner(System.in);
 
-		// 1번 게시물 저장소
-		Article article1 = new Article();	
-		// 2번 게시물 저장소
-		Article article2 = new Article();
+	// 1번 게시물 저장소
+	Article article1 = new Article();
+	// 2번 게시물 저장소
+	Article article2 = new Article();
+
+	public Article getArticle(int id) {
+		if (id == 1) {
+			return article1;
+		}
+		else if (id == 2) {
+			return article2;
+		}
+		
+		return null;
+	}
+
+	public void run() {
+		Scanner scanner = new Scanner(System.in);
 
 		int lastArticleId = 0;
 
@@ -20,28 +32,18 @@ public class App {
 			if (command.startsWith("article detail")) {
 				int inputedId = Integer.parseInt(command.split(" ")[2]);
 				System.out.println("== 게시물 상세 ==");
-				
-				if (inputedId == 1) {
-					if(article1.id == 0) {
-						System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedId);
-						continue;
-					}
-					System.out.printf("번호 : %s\n", article1.id);
-					System.out.printf("제목: %s\n",  article1.title);
-					System.out.printf("내용: %s\n", article1.body);
-				} else if (inputedId == 2) {
-					if(article2.id == 0) {
-						System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedId);
-						continue;
-					}
-					System.out.printf("번호: %s\n", article2.id);
-					System.out.printf("제목: %s\n", article2.title);
-					System.out.printf("내용: %s\n", article2.body);
-				} else {
-					System.out.printf("%d번 게시물은 존재하지 않습니다.\n",inputedId);
-				}
 
-			}else if (command.equals("article list")) {
+				Article selectedArticle = getArticle(inputedId);
+				
+				if (selectedArticle  == null || selectedArticle.id == 0) {
+					System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedId);
+					continue;
+				}
+				System.out.printf("번호 : %s\n", selectedArticle.id);
+				System.out.printf("제목: %s\n", selectedArticle.title);
+				System.out.printf("내용: %s\n", selectedArticle.body);
+
+			} else if (command.equals("article list")) {
 				System.out.println("== 게시물 리스트 ==");
 
 				if (lastArticleId == 0) {
@@ -83,7 +85,6 @@ public class App {
 					article2.body = body;
 				}
 
-				
 				System.out.printf("%d번 게시물이 생성되었습니다.\n", id);
 
 				// 가장 마지막 게시물 번호를 갱신한다.
@@ -92,7 +93,7 @@ public class App {
 			} else if (command.equals("system exit")) {
 				System.out.println("==시스템 종료==");
 				break;
-			} 
+			}
 		}
 
 		scanner.close();
