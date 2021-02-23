@@ -48,17 +48,18 @@ public class App {
 				System.out.printf("내용 : ");
 				body = sc.nextLine();
 
-				System.out.println(title + ", " + body);
+				Article article = getArticle(id);
 
 				if (id == 1) {
-					article1.id = id;
-					article1.title = title;
-					article1.body = body;
+					article = article1;
 				} else if (id == 2) {
-					article2.id = id;
-					article2.title = title;
-					article2.body = body;
+					article = article2;
 				}
+				
+				article.id = id;
+				article.title = title;
+				article.body = body;
+				
 				System.out.printf("%d번 게시물이 생성되었습니다.\n", id);
 
 				lastArticleId = id;
@@ -75,14 +76,8 @@ public class App {
 
 				for (int i = 1; i <= lastArticleId; i++) {
 
-					Article article = null;
-
-					if (i == 1) {
-						article = article1;
-					} else if (i == 2) {
-						article = article2;
-					}
-
+					Article article = getArticle(i);
+		
 					System.out.printf("%d / %s\n", article.id, article.title);
 				}
 			} else if (command.startsWith("article detail")) {
