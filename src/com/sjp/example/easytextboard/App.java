@@ -3,28 +3,32 @@ package com.sjp.example.easytextboard;
 import java.util.Scanner;
 
 public class App {
+	Article[] articles = new Article[3];
+	int lastArticleId = 0;
 
-	Article article1 = new Article();
-	Article article2 = new Article();
-	
 	Article getArticle(int id) {
-		if (id == 1) {
-			return article1;
+		if (id < 1) {
+			return null;
 		}
-		else if(id == 2) {
-			return article2;
+
+		if (id > lastArticleId) {
+			return null;
 		}
-		return null;
+
+		return articles[id - 1];
 	}
-	
+
 	public void run() {
+		for (int i = 0; i < articles.length; i++) {
+			articles[i] = new Article();
+		}
 
 		Scanner sc = new Scanner(System.in);
 
-		int maxArticlesCount = 2;
-		int lastArticleId = 0;
+		int maxArticlesCount = articles.length;
 
 		while (true) {
+
 			System.out.printf("명령어) ");
 			String command = sc.nextLine();
 
@@ -35,13 +39,15 @@ public class App {
 				System.out.println("== 게시물 등록 ==");
 
 				if (lastArticleId >= maxArticlesCount) {
-					System.out.println("더 이상 생성활 수 없습니다");
+					System.out.println("더 이상 생성할 수 없습니다.");
 					continue;
 				}
 
 				int id = lastArticleId + 1;
 				String title;
 				String body;
+
+				lastArticleId = id;
 
 				System.out.printf("제목 : ");
 				title = sc.nextLine();
@@ -50,21 +56,12 @@ public class App {
 
 				Article article = getArticle(id);
 
-				if (id == 1) {
-					article = article1;
-				} else if (id == 2) {
-					article = article2;
-				}
-				
 				article.id = id;
 				article.title = title;
 				article.body = body;
-				
+
 				System.out.printf("%d번 게시물이 생성되었습니다.\n", id);
-
-				lastArticleId = id;
 			} else if (command.equals("article list")) {
-
 				System.out.println("== 게시물 리스트 ==");
 
 				if (lastArticleId == 0) {
@@ -75,12 +72,11 @@ public class App {
 				System.out.println("번호 / 제목");
 
 				for (int i = 1; i <= lastArticleId; i++) {
-
 					Article article = getArticle(i);
-		
+
 					System.out.printf("%d / %s\n", article.id, article.title);
 				}
-			} else if (command.startsWith("article detail")) {
+			} else if (command.startsWith("article detail ")) {
 				int inputedId = Integer.parseInt(command.split(" ")[2]);
 				System.out.println("== 게시물 상세 ==");
 
@@ -91,20 +87,13 @@ public class App {
 
 				Article article = getArticle(inputedId);
 
-				if (inputedId == 1) {
-					article = article1;
-				} else if (inputedId == 2) {
-					article = article2;
-				}
-
 				System.out.printf("번호 : %d\n", article.id);
 				System.out.printf("제목 : %s\n", article.title);
-				System.out.printf("내용: %s\n", article.body);
+				System.out.printf("내용 : %s\n", article.body);
 			}
 		}
 
 		sc.close();
-
 	}
 
 }
