@@ -21,8 +21,27 @@ public class App {
 
 		return articles[index];
 	}
-
+	
+	private boolean isArticlesFull() {
+		return articlesSize == articles.length;
+	}
+	
 	private int add(String title, String body) {
+		// 만약에 현재 꽉 차 있다면
+		// 새 업체와 계약한다.
+		
+		if ( isArticlesFull() ) {
+			System.out.printf("== 배열 사이즈 증가(%d => %d) ==\n", articles.length * 2);
+			
+			Article[] newArticles = new Article[articles.length *2];
+		
+			for (int i = 0; i < articles.length; i ++) {
+				newArticles[i] = articles[i];
+			}
+			
+			articles = newArticles;
+		}
+		
 		Article article = new Article();
 
 		article.id = lastArticleId + 1;
@@ -73,7 +92,7 @@ public class App {
 
 		Scanner sc = new Scanner(System.in);
 
-		int maxArticlesCount = articles.length;
+		
 
 		while (true) {
 
@@ -85,11 +104,6 @@ public class App {
 				break;
 			} else if (command.equals("article add")) {
 				System.out.println("== 게시물 등록 ==");
-
-				if (articlesSize() >= maxArticlesCount) {
-					System.out.println("더 이상 생성할 수 없습니다.");
-					continue;
-				}
 
 				String title;
 				String body;
