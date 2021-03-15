@@ -3,16 +3,25 @@ package com.sjp.example.easytextboard;
 import java.util.Scanner;
 
 public class App {
-	private Article[] articles = new Article[3];
-	private int lastArticleId = 0;
-	private int articlesSize = 0;
+	private Article[] articles;
+	private int lastArticleId;
+	private int articlesSize;
+
+	public void init() {
+		articles = new Article[32];
+		lastArticleId = 0;
+		articlesSize = 0;
+
+		for (int i = 0; i < 32; i++) {
+			add("제목" + (i + 1), "내용" + (i + 1));
+		}
+	}
 
 	private int articlesSize() {
 		return articlesSize;
 	}
 
-	Article getArticle(int id) {
-
+	private Article getArticle(int id) {
 		int index = getIndexById(id);
 
 		if (index == -1) {
@@ -21,27 +30,27 @@ public class App {
 
 		return articles[index];
 	}
-	
+
 	private boolean isArticlesFull() {
 		return articlesSize == articles.length;
 	}
-	
+
 	private int add(String title, String body) {
 		// 만약에 현재 꽉 차 있다면
 		// 새 업체와 계약한다.
-		
-		if ( isArticlesFull() ) {
-			System.out.printf("== 배열 사이즈 증가(%d => %d) ==\n", articles.length * 2);
-			
-			Article[] newArticles = new Article[articles.length *2];
-		
-			for (int i = 0; i < articles.length; i ++) {
+
+		if (isArticlesFull()) {
+			System.out.printf("== 배열 사이즈 증가(%d => %d) ==\n", articles.length, articles.length * 2);
+
+			Article[] newArticles = new Article[articles.length * 2];
+
+			for (int i = 0; i < articles.length; i++) {
 				newArticles[i] = articles[i];
 			}
-			
+
 			articles = newArticles;
 		}
-		
+
 		Article article = new Article();
 
 		article.id = lastArticleId + 1;
@@ -76,23 +85,19 @@ public class App {
 				return i;
 			}
 		}
+		
 		return -1;
 	}
 
 	private void modify(int inputedId, String title, String body) {
-
 		Article article = getArticle(inputedId);
 		article.title = title;
 		article.body = body;
-
 	}
-	
+
 	// 가장 상위층 시작
 	public void run() {
-
 		Scanner sc = new Scanner(System.in);
-
-		
 
 		while (true) {
 
@@ -130,7 +135,6 @@ public class App {
 					Article article = articles[i];
 
 					System.out.printf("%d / %s\n", article.id, article.title);
-
 				}
 			} else if (command.startsWith("article detail ")) {
 				int inputedId = Integer.parseInt(command.split(" ")[2]);
@@ -151,7 +155,7 @@ public class App {
 				System.out.println("== 게시물 수정 ==");
 
 				Article article = getArticle(inputedId);
-				
+
 				if (article == null) {
 					System.out.printf("%d번 게시물이 존재하지 않습니다.\n", inputedId);
 					continue;
@@ -166,6 +170,7 @@ public class App {
 				modify(inputedId, title, body);
 
 				System.out.printf("%d번 게시물이 수정되었습니다.\n", inputedId);
+				
 			} else if (command.startsWith("article delete ")) {
 				int inputedId = Integer.parseInt(command.split(" ")[2]);
 				System.out.println("== 게시물 삭제 ==");
@@ -181,7 +186,6 @@ public class App {
 
 				System.out.printf("%d번 게시물이 삭제되었습니다.\n", inputedId);
 			}
-
 		}
 
 		sc.close();
