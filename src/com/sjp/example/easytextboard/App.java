@@ -37,7 +37,7 @@ public class App {
 
 	private int add(String title, String body) {
 		// 만약에 현재 꽉 차 있다면
-		// 새 업체와 계약한다.
+		// 새 업체과 계약한다.
 
 		if (isArticlesFull()) {
 			System.out.printf("== 배열 사이즈 증가(%d => %d) ==\n", articles.length, articles.length * 2);
@@ -85,7 +85,7 @@ public class App {
 				return i;
 			}
 		}
-		
+
 		return -1;
 	}
 
@@ -121,14 +121,84 @@ public class App {
 				int id = add(title, body);
 
 				System.out.printf("%d번 게시물이 생성되었습니다.\n", id);
-			} else if (command.startsWith("article list ")) {
-				
-				int page = Integer.parseInt(command.split(" ")[2]);
-				
+			} else if (command.startsWith("article search ")) {
+
+				String[] commandBits = command.split(" ");
+
+				String searchKeyword = commandBits[2];
+
+				int page = 1;
+
+				if (commandBits.length >= 4) {
+					page = Integer.parseInt(commandBits[3]);
+				}
+
 				if (page <= 1) {
 					page = 1;
 				}
-				
+
+				System.out.println("== 게시물 검색 ==");
+
+				int searchResultArticlesLen = 0;
+
+				// 검색된 결과의 수를 먼저 구하기
+				for (Article article : articles) {
+					if (article == null) {
+						break;
+					}
+
+					if (article.title.contains(searchKeyword)) {
+						searchResultArticlesLen++;
+					}
+				}
+
+				Article[] searchResultArticles = new Article[searchResultArticlesLen];
+
+				int searchResultArticlesIndex = 0;
+				for (Article article : articles) {
+					if (article == null) {
+						break;
+					}
+
+					if (article.title.contains(searchKeyword)) {
+						searchResultArticles[searchResultArticlesIndex] = article;
+						searchResultArticlesIndex++;
+					}
+				}
+
+				if (searchResultArticles.length == 0) {
+					System.out.println("검색결과가 존재하지 않습니다.");
+					continue;
+				}
+
+				System.out.println("번호 / 제목");
+
+				int itemsInAPage = 10;
+				int startPos = searchResultArticles.length - 1;
+				startPos -= (page - 1) * itemsInAPage;
+				int endPos = startPos - (itemsInAPage - 1);
+
+				if (endPos < 0) {
+					endPos = 0;
+				}
+
+				if (startPos < 0) {
+					System.out.printf("%d페이지는 존재하지 않습니다.\n", page);
+					continue;
+				}
+
+				for (int i = startPos; i >= endPos; i--) {
+					Article article = searchResultArticles[i];
+
+					System.out.printf("%d / %s\n", article.id, article.title);
+				}
+			} else if (command.startsWith("article list ")) {
+				int page = Integer.parseInt(command.split(" ")[2]);
+
+				if (page <= 1) {
+					page = 1;
+				}
+
 				System.out.println("== 게시물 리스트 ==");
 
 				if (articlesSize() == 0) {
@@ -137,36 +207,43 @@ public class App {
 				}
 
 				System.out.println("번호 / 제목");
-				
-				
+
 				int itemsInAPage = 10;
 				int startPos = articlesSize() - 1;
-				startPos -= (page - 1)  * itemsInAPage;
+				startPos -= (page - 1) * itemsInAPage;
 				int endPos = startPos - (itemsInAPage - 1);
-				
-				if ( endPos < 0 ) {
+
+				if (endPos < 0) {
 					endPos = 0;
 				}
-				
+
 				if (startPos < 0) {
-					System.out.printf("%d페이지는 존재하지 않습니다.\n" , page);
+					System.out.printf("%d페이지는 존재하지 않습니다.\n", page);
 					continue;
 				}
-				
-				
-				for (int i = startPos;  i >= endPos; i--) {
+
+				for (int i = startPos; i >= endPos; i--) {
 					Article article = articles[i];
 
 					System.out.printf("%d / %s\n", article.id, article.title);
 				}
 			} else if (command.startsWith("article detail ")) {
-				int inputedId = Integer.parseInt(command.split(" ")[2]);
+				int inputedId = 0;
+				
+				try {
+					inputedId = Integer.parseInt(command.split(" ")[2]);
+				}
+				catch ( NumberFormatException e ) {
+					System.out.println("게시물 번호를 양의 정수로 입력해주세요.");
+					continue;
+				}
+				
 				System.out.println("== 게시물 상세 ==");
 
 				Article article = getArticle(inputedId);
 
 				if (article == null) {
-					System.out.printf("%d번 게시물이 존재하지 않습니다.\n", inputedId);
+					System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedId);
 					continue;
 				}
 
@@ -180,7 +257,7 @@ public class App {
 				Article article = getArticle(inputedId);
 
 				if (article == null) {
-					System.out.printf("%d번 게시물이 존재하지 않습니다.\n", inputedId);
+					System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedId);
 					continue;
 				}
 
@@ -193,7 +270,7 @@ public class App {
 				modify(inputedId, title, body);
 
 				System.out.printf("%d번 게시물이 수정되었습니다.\n", inputedId);
-				
+
 			} else if (command.startsWith("article delete ")) {
 				int inputedId = Integer.parseInt(command.split(" ")[2]);
 				System.out.println("== 게시물 삭제 ==");
@@ -201,7 +278,7 @@ public class App {
 				Article article = getArticle(inputedId);
 
 				if (article == null) {
-					System.out.printf("%d번 게시물이 존재하지 않습니다.\n", inputedId);
+					System.out.printf("%d번 게시물은 존재하지 않습니다.\n", inputedId);
 					continue;
 				}
 
@@ -213,5 +290,4 @@ public class App {
 
 		sc.close();
 	}
-
 }
